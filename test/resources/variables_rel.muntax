@@ -1,0 +1,44 @@
+{
+  "automata": [
+    {
+      "name": "TA1",
+      "initial": 0,
+      "nodes": [
+        {
+          "id": 0,
+          "name": "0",
+          "x": 831.51513671875,
+          "y": 294.54547119140625,
+          "invariant": ""
+        },
+        {
+          "id": 1,
+          "name": "1",
+          "x": 321.5,
+          "y": 123.1,
+          "invariant": ""
+        }
+      ],
+      "edges": [
+        {
+          "source": 0,
+          "target": 0,
+          "guard": "",
+          "label": "",
+          "update": "a := a + 1"
+        },
+        {
+          "source": 0,
+          "target": 1,
+          "guard": "(a = 10)",
+          "label": "",
+          "update": ""
+        }
+      ]
+    }
+  ],
+  "clocks": "x",
+  "vars": "a[0:10]",
+  "formula": "E<> TA1.1",
+  "comment": "variables maintain their values"
+}

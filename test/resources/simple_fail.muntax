@@ -1,1 +1,34 @@
-{"automata":[{"initial":8,"nodes":[{"id":9,"name":"N","invariant":""},{"id":8,"name":"M","invariant":""}],"edges":[{"source":8,"target":9,"guard":"","label":"","update":""},{"source":9,"guard":"","label":"","update":""}]}]}
+{
+    "automata": [
+        {
+            "edges": [
+                {
+                    "guard": "",
+                    "label": "",
+                    "source": 8,
+                    "target": 9,
+                    "update": ""
+                },
+                {
+                    "guard": "",
+                    "label": "",
+                    "source": 9,
+                    "update": ""
+                }
+            ],
+            "initial": 8,
+            "nodes": [
+                {
+                    "id": 9,
+                    "invariant": "",
+                    "name": "N"
+                },
+                {
+                    "id": 8,
+                    "invariant": "",
+                    "name": "M"
+                }
+            ]
+        }
+    ]
+}

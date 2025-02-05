@@ -1,0 +1,93 @@
+{
+    "automata": [
+      {
+        "name": "TA1",
+        "initial": 0,
+        "nodes": [
+          {
+            "id": 0,
+            "name": "S",
+            "x": 831.51513671875,
+            "y": 294.54547119140625,
+            "invariant": ""
+          },
+          {
+            "id": 1,
+            "name": "I",
+            "x": 321.5,
+            "y": 123.1,
+            "invariant": ""
+          },
+          {
+            "id": 2,
+            "name": "E",
+            "x": 569.697021484375,
+            "y": 290.9090881347656,
+            "invariant": ""
+          }
+        ],
+        "edges": [
+          {
+            "source": 0,
+            "target": 1,
+            "guard": "a = 0",
+            "label": "",
+            "update": "a := 1, x := 3"
+          },
+          {
+            "source": 1,
+            "target": 2,
+            "guard": "a = 2",
+            "label": "",
+            "update": "x := 2"
+          }
+        ]
+      },
+      {
+        "name": "TA2",
+        "initial": 4,
+        "nodes": [
+          {
+            "id": 4,
+            "name": "S",
+            "x": 831.51513671875,
+            "y": 269.0909118652344,
+            "invariant": "x <= 3"
+          },
+          {
+            "id": 5,
+            "name": "I",
+            "x": 602,
+            "y": 82,
+            "invariant": ""
+          },
+          {
+            "id": 6,
+            "name": "E",
+            "x": 392,
+            "y": 268.69696044921875,
+            "invariant": "x < 3"
+          }
+        ],
+        "edges": [
+          {
+            "source": 4,
+            "target": 5,
+            "guard": "(x >= 1)",
+            "label": "",
+            "update": "x := 2"
+          },
+          {
+            "source": 5,
+            "target": 6,
+            "guard": "(a = 1) && (x >= 3)",
+            "label": "",
+            "update": "a:= 2"
+          }
+        ]
+      }
+    ],
+    "clocks": "x",
+    "vars": "a[0:3]",
+    "formula": "E<> TA1.E"
+  }

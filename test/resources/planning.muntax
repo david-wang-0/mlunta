@@ -1,0 +1,308 @@
+{
+  "automata": [
+    { 
+      "name": "main",
+      "initial": 0,
+      "nodes": [
+        {
+          "id": 0,
+          "name": "start",
+          "invariant": ""
+        },
+        {
+          "id": 1,
+          "name": "plan",
+          "invariant": ""
+        },
+        {
+          "id": 2,
+          "name": "goal",
+          "invariant": ""
+        }
+      ],
+      "edges": [
+        {
+          "source": 0,
+          "target": 1,
+          "guard": "",
+          "label": "",
+          "update": "lock := 1, pf11 := 1, ef12 := 1, s1 := 1"
+        },
+        {
+          "source": 1,
+          "target": 2,
+          "guard": "(pf12 = 1) && (pf11 = 1)",
+          "label": "",
+          "update": "lock := 0"
+        }
+      ]
+    },
+    {
+      "name": "mpe111",
+      "initial": 0,
+      "nodes": [
+        {
+          "id": 0,
+          "name": "inactive",
+          "invariant": ""
+        },
+        {
+          "id": 1,
+          "name": "a1",
+          "invariant": ""
+        },
+        {
+          "id": 2,
+          "name": "a2",
+          "invariant": ""
+        }
+      ],
+      "edges": [
+        {
+          "source": 0,
+          "target": 1,
+          "guard": "(pf11 = 1) && (lpf11 = 0) && (mpf111e > 0) && (mpf112e > 0) && (lock = 1)",
+          "label": "",
+          "update": "pf11 := 0, mpe111s := 0, ls1 := ls1 + 1, lef11 := lef11 + 1"
+        },
+        {
+          "source": 1,
+          "target": 2,
+          "guard": "(mpe111s >= 4) && (lock = 1)",
+          "label": "",
+          "update": ""
+        },
+        {
+          "source": 2,
+          "target": 0,
+          "guard": "(mpe111s < 5) && (mpf111s > 0) && (mpf111e > 0) && (lock = 1)",
+          "label": "",
+          "update": "pe11 := 1, mpe111e := 0, ls1 := ls1 + (-1), lef11 := lef11 + (-1)"
+        }
+      ]
+    },
+    {
+      "name": "mpe112",
+      "initial": 0,
+      "nodes": [
+        {
+          "id": 0,
+          "name": "inactive",
+          "invariant": ""
+        },
+        {
+          "id": 1,
+          "name": "a1",
+          "invariant": ""
+        },
+        {
+          "id": 2,
+          "name": "a2",
+          "invariant": ""
+        }
+      ],
+      "edges": [
+        {
+          "source": 0,
+          "target": 1,
+          "guard": "(pf12 = 1) && (lpf12 = 0) && (mpf111e > 0) && (mpf112e > 0) && (lock = 1)",
+          "label": "",
+          "update": "pf12 := 0, mpe112s := 0, ls1 := ls1 + 1, lef12 := lef12 + 1"
+        },
+        {
+          "source": 1,
+          "target": 2,
+          "guard": "(mpe112s >= 4) && (lock = 1)",
+          "label": "",
+          "update": ""
+        },
+        {
+          "source": 2,
+          "target": 0,
+          "guard": "(mpe112s < 5) && (mpf111s > 0) && (mpf111e > 0) && (lock = 1)",
+          "label": "",
+          "update": "pe11 := 1, mpe112e := 0, ls1 := ls1 + (-1), lef12 := lef12 + (-1)"
+        }
+      ]
+    },
+    {
+      "name": "me112",
+      "initial": 0,
+      "nodes": [
+        {
+          "id": 0,
+          "name": "inactive",
+          "invariant": ""
+        },
+        {
+          "id": 1,
+          "name": "a1",
+          "invariant": ""
+        },
+        {
+          "id": 2,
+          "name": "a2",
+          "invariant": ""
+        }
+      ],
+      "edges": [
+        {
+          "source": 0,
+          "target": 1,
+          "guard": "(s1 = 1) && (ls1 = 0) && (lef11 = 0) && (me121e > 0) && (lock = 1)",
+          "label": "",
+          "update": "s1 := 0, ef11 := 0, me112s := 0"
+        },
+        {
+          "source": 1,
+          "target": 2,
+          "guard": "(me112s >= 4) && (lock = 1)",
+          "label": "",
+          "update": ""
+        },
+        {
+          "source": 2,
+          "target": 0,
+          "guard": "(me112s < 5) && (me121s > 0) && (lock = 1)",
+          "label": "",
+          "update": "s1 := 1, ef12 := 1, me112e := 0"
+        }
+      ]
+    },
+    {
+      "name": "me121",
+      "initial": 0,
+      "nodes": [
+        {
+          "id": 0,
+          "name": "inactive",
+          "invariant": ""
+        },
+        {
+          "id": 1,
+          "name": "a1",
+          "invariant": ""
+        },
+        {
+          "id": 2,
+          "name": "a2",
+          "invariant": ""
+        }
+      ],
+      "edges": [
+        {
+          "source": 0,
+          "target": 1,
+          "guard": "(s1 = 1) && (ls1 = 0) && (lef12 = 0) && (me112e > 0)",
+          "label": "",
+          "update": "s1 := 0, ef12 := 0, me121s := 0"
+        },
+        {
+          "source": 1,
+          "target": 2,
+          "guard": "(me121s >= 4) && (lock = 1)",
+          "label": "",
+          "update": ""
+        },
+        {
+          "source": 2,
+          "target": 0,
+          "guard": "(me121s < 5) && (me112s > 0) && (lock = 1)",
+          "label": "",
+          "update": "s1 := 1, ef11 := 1, me121e := 0"
+        }
+      ]
+    },
+    {
+      "name": "mpf111",
+      "initial": 0,
+      "nodes": [
+        {
+          "id": 0,
+          "name": "inactive",
+          "invariant": ""
+        },
+        {
+          "id": 1,
+          "name": "a1",
+          "invariant": ""
+        },
+        {
+          "id": 2,
+          "name": "a2",
+          "invariant": ""
+        }
+      ],
+      "edges": [
+        {
+          "source": 0,
+          "target": 1,
+          "guard": "(pe11 = 1) && (lpe11 = 0) && (mpe111e > 0) && (mpe112e > 0) && (lock = 1)",
+          "label": "",
+          "update": "pe11 := 0, mpf111s := 0, ls1 := ls1 + 1, lef11 := lef11 + 1"
+        },
+        {
+          "source": 1,
+          "target": 2,
+          "guard": "(mpf111s >= 4) && (lock = 1)",
+          "label": "",
+          "update": ""
+        },
+        {
+          "source": 2,
+          "target": 0,
+          "guard": "(mpf111s < 5) && (mpe111s > 0) && (mpe112s > 0) && (lock = 1)",
+          "label": "",
+          "update": "pf11 := 1, mpf111e := 0, ls1 := ls1 + (-1), lef11 := lef11 + (-1)"
+        }
+      ]
+    },
+    {
+      "name": "mpf112",
+      "initial": 0,
+      "nodes": [
+        {
+          "id": 0,
+          "name": "inactive",
+          "invariant": ""
+        },
+        {
+          "id": 1,
+          "name": "a1",
+          "invariant": ""
+        },
+        {
+          "id": 2,
+          "name": "a2",
+          "invariant": ""
+        }
+      ],
+      "edges": [
+        {
+          "source": 0,
+          "target": 1,
+          "guard": "(pe11 = 1) && (lpe11 = 0) && (mpe111e > 0) && (mpe112e > 0) && (lock = 1)",
+          "label": "",
+          "update": "pe11 := 0, mpf112s := 0, ls1 := ls1 + 1, lef12 := lef12 + 1"
+        },
+        {
+          "source": 1,
+          "target": 2,
+          "guard": "(mpf112s >= 4) && (lock = 1)",
+          "label": "",
+          "update": ""
+        },
+        {
+          "source": 2,
+          "target": 0,
+          "guard": "(mpf112s < 5) && (mpe111s > 0) && (mpe112s > 0) && (lock = 1)",
+          "label": "",
+          "update": "pf12 := 1, mpf112e := 0, ls1 := ls1 + (-1), lef12 := lef12 + (-1)"
+        }
+      ]
+    }
+  ],
+  "clocks": "mpe111s, mpe112s, mpf111s, mpf112s, me112s, me121s, mpe111e, mpe112e, mpf111e, mpf112e, me112e, me121e",   
+  "vars": "lock[0:1], pf11[0:1], pf12[0:1], ef11[0:1], ef12[0:1], s1[0:1], pe11[0:1], lpf11[0:1], lpf12[0:1], lef11[0:1], lef12[0:1], ls1[0:1], lpe11[0:1]",
+  "formula": "E<> main.goal"
+}

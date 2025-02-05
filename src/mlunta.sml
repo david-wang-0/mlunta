@@ -166,6 +166,7 @@ fun certcc extra_lu compression certification json_str renaming_path cert_path (
     end
 
 fun check_and_cert extra_lu renaming_path cert_path json_str compression certification =
+
       json_str
       |> check_and_then extra_lu (
           certcc

@@ -173,7 +173,9 @@ val update_copy =
     infix_pairc scan_var scan_var ":=" Copy
     || infix_pairc scan_var scan_var "=" Copy
 
-val shift_plus = infix_pairc scan_var Symbol.natural "+" id
+(* munta can parse negative integers, while this was previously limited to natural numbers. Preliminary testing
+    indicates that this change breaks nothing *)
+val shift_plus = infix_pairc scan_var ((scan_parens Symbol.integer) || Symbol.integer) "+" id
 
 fun construct_shift (old , (new, inc)) =
     if old = new andalso inc >= 0 then Shift (old, inc)

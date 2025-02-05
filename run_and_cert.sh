@@ -1,0 +1,1 @@
+./build/mluntac-mlton -model $1.muntax -certificate $2.cert -renaming $2.rnm -extra $3

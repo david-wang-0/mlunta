@@ -1,0 +1,95 @@
+{
+  "automata": [
+    {
+      "name": "TA1",
+      "initial": 0,
+      "nodes": [
+        {
+          "id": 0,
+          "name": "0",
+          "x": 831.51513671875,
+          "y": 294.54547119140625,
+          "invariant": ""
+        },
+        {
+          "id": 1,
+          "name": "1",
+          "x": 321.5,
+          "y": 123.1,
+          "invariant": ""
+        },
+        {
+          "id": 2,
+          "name": "2",
+          "x": 321.5,
+          "y": 123.1,
+          "invariant": ""
+        }
+
+      ],
+      "edges": [
+        {
+          "source": 0,
+          "target": 1,
+          "guard": "",
+          "label": "",
+          "update": "a := 1, b := 0, c := 0"
+        },
+        {
+          "source": 1,
+          "target": 2,
+          "guard": "(a = 1) && (c = 1)",
+          "label": "",
+          "update": "b := 0"
+        }
+      ]
+    },
+    {
+      "name": "TA2",
+      "initial": 4,
+      "nodes": [
+        {
+          "id": 4,
+          "name": "4",
+          "x": 831.51513671875,
+          "y": 269.0909118652344,
+          "invariant": ""
+        },
+        {
+          "id": 5,
+          "name": "5",
+          "x": 602,
+          "y": 82,
+          "invariant": ""
+        },
+        {
+          "id": 6,
+          "name": "6",
+          "x": 602,
+          "y": 82,
+          "invariant": ""
+        }
+      ],
+      "edges": [
+        {
+          "source": 4,
+          "target": 5,
+          "guard": "a = 1",
+          "label": "",
+          "update": "b := 1, c := 1, x := 1"
+        },
+        {
+          "source": 5,
+          "target": 6,
+          "guard": "(a = 1) && (b = 0) && (c = 1) && (x <= 2)",
+          "label": "",
+          "update": ""
+        }
+      ]
+    }
+  ],
+  "clocks": "x",
+  "vars": "a[0:1], b[0:1], c[0:1]",
+  "formula": "E<> TA2.6",
+  "comment": "variables maintain their values"
+}

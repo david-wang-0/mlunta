@@ -1,0 +1,7 @@
+planning/
+
+*.cert
+*.rnm
+
+.vscode/
+note
