@@ -24,16 +24,16 @@
         {
           "source": 0,
           "target": 1,
-          "guard": "",
+          "guard": "lock = 0",
           "label": "",
           "update": "lock := 1, pf11 := 1, ef12 := 1, s1 := 1"
         },
         {
           "source": 1,
           "target": 2,
-          "guard": "(pf12 = 1) && (pf11 = 1)",
+          "guard": "lock = 1 && (pf12 = 1)",
           "label": "",
-          "update": "lock := 0"
+          "update": "lock := 2"
         }
       ]
     },
@@ -193,7 +193,7 @@
         {
           "source": 0,
           "target": 1,
-          "guard": "(s1 = 1) && (ls1 = 0) && (lef12 = 0) && (me112e > 0)",
+          "guard": "(s1 = 1) && (ls1 = 0) && (lef12 = 0) && (me112e > 0) && lock = 1",
           "label": "",
           "update": "s1 := 0, ef12 := 0, me121s := 0"
         },
@@ -303,6 +303,6 @@
     }
   ],
   "clocks": "mpe111s, mpe112s, mpf111s, mpf112s, me112s, me121s, mpe111e, mpe112e, mpf111e, mpf112e, me112e, me121e",   
-  "vars": "lock[0:1], pf11[0:1], pf12[0:1], ef11[0:1], ef12[0:1], s1[0:1], pe11[0:1], lpf11[0:1], lpf12[0:1], lef11[0:1], lef12[0:1], ls1[0:1], lpe11[0:1]",
+  "vars": "lock[0:2], pf11[0:1], pf12[0:1], ef11[0:1], ef12[0:1], s1[0:1], pe11[0:1], lpf11[0:1], lpf12[0:1], lef11[0:1], lef12[0:1], ls1[0:1], lpe11[0:1]",
   "formula": "E<> main.goal"
 }
