@@ -51,9 +51,6 @@ signature POLY_PASSED_SET = sig
 
   val insert_p': ('zone -> 'zone -> bool) -> ('key, 'zone) hash_table ->
                  ('key * 'zone) -> ('key, 'zone) hash_table
-  
-  val remove_p: ('zone -> bool) -> ('key, 'zone) hash_table ->
-                'key -> unit
 
   val push: ('key, 'zone) hash_table -> ('key * 'zone) ->
                     ('key, 'zone) hash_table

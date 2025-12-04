@@ -17,6 +17,7 @@ type automaton = {
   nodes: node list,
   edges: edge list,
   committed: int list,
+  urgent: int list,
   initial: int
 }
 

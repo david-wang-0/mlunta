@@ -19,6 +19,8 @@ sig
   (* XXX: What from list should exist  *)
   val from_list : Entry.t list list -> t
   val from_int_rep_list : IntRep.t list list -> t
+  val to_int_rep_list : t -> IntRep.t list list
+
   val init: int -> t
   (* Copies DBM array: *)
   val copy: t -> t
@@ -68,8 +70,6 @@ signature DBM = sig
   include BINARY where type from = t
   val equal: t -> t -> bool
   val to_string: t -> string
-  val to_string2: (int -> string) -> t -> string
-  val to_string3: (int -> string) -> t -> string
 end
 
 functor DBM(structure E : DBM_ENTRY structure M : MATRIX) : DBM =
@@ -113,6 +113,11 @@ fun empty D =
 fun from_int_rep_list ls =
     List.map (fn elem => List.map (fn x => toElem x) elem) ls
     |> from_list
+
+fun to_int_rep_list d =
+    d
+    |> M.toList
+    |> map (map (fn x => E.to_int x))
 
 fun iter comb body D = for (comb D) (body D)
 fun iter_return comb body D = iter comb body </ tap \> D
@@ -359,98 +364,23 @@ fun equal D D' =
 fun to_string D =
     let
       val len = M.dim D
-      val last_idx = len * len - 1
-      val print_elem =
-        fn (i, elem, acc) =>
-          let
-            val smaller = i < last_idx
-            val new_line = i mod len = 0
-            val brk = if new_line then "\n" else ""
-            val eq_z = i = 0
-          in
-            (case (eq_z, smaller) of
-              (true, _) => acc ^ brk ^ (E.to_string elem)
-            | (false, true) => acc ^ ", " ^ brk ^ (E.to_string elem)
-            | (false, false)  => acc ^ ", " ^ brk ^ (E.to_string elem) ^ "]")
-          end
+        val last_idx = len * len - 1
+        val print_elem =
+         fn (i, elem, acc) =>
+            let
+              val smaller = i < last_idx
+              val new_line = i mod len = 0
+              val brk = if new_line then "\n" else ""
+              val eq_z = i = 0
+            in
+                (case (eq_z, smaller) of
+                     (true, _) => acc ^ brk ^ (E.to_string elem)
+                   | (false, true) => acc ^ ", " ^ brk ^ (E.to_string elem)
+                   | (false, false)  => acc ^ ", " ^ brk ^ (E.to_string elem) ^ "]")
+            end
     in
-      M.foldli print_elem "[" D
+        M.foldli print_elem "[" D
     end
-
-fun to_string2 clock_name_of D =
-  let
-    val dim = M.dim D
-    fun entry_to_string (k, entry, acc) =
-      let
-        val i = k div dim
-        val j = k mod dim
-        val x = if i > 0 then SOME (clock_name_of i) else NONE
-        val y = if j > 0 then SOME (clock_name_of j) else NONE
-        val entry_string = E.mk_string x y entry
-      in
-        if (E.is_inf entry orelse (i = j andalso not (E.check_neg entry))) then acc else entry_string :: acc
-      end
-    val entries = M.foldli entry_to_string [] D
-    val entries = separate ", " entries
-  in
-    if empty D then
-      "empty"
-    else
-      List.foldl (op ^) "" entries
-  end
-
-fun to_string3 clock_name_of D =
-  let
-    val dim = M.dim D
-    fun entry_to_string i j entry acc =
-      let
-        val x = if i > 0 then SOME (clock_name_of i) else NONE
-        val y = if j > 0 then SOME (clock_name_of j) else NONE
-        val entry_string = E.mk_string x y entry
-      in
-        if
-          E.is_inf entry orelse
-          (i = j andalso not (E.check_neg entry))
-        then
-          acc
-        else entry_string :: acc
-      end
-    fun clock i acc =
-      let
-        open E
-        val lb = M.sub 0 i D
-        val ub = M.sub i 0 D
-      in
-        if |~| lb == ub then
-          clock_name_of i ^ " = " ^ inner_to_string ub :: acc
-        else
-          acc
-          |> entry_to_string 0 i lb
-          |> entry_to_string i 0 ub
-      end
-
-    fun diff (k, entry, acc) =
-      let
-        open E
-        val i = k div dim
-        val j = k mod dim
-        val e = M.sub i 0 D |+| M.sub 0 j D
-      in
-        if i = 0 orelse j = 0 orelse e |<=| entry then
-          acc
-        else
-          entry_to_string i j entry acc
-      end
-
-    val entries = List.foldl (fn (i, acc) => clock i acc) [] (upto 1 (dim - 1))
-    val entries = M.foldli diff entries D
-    val entries = separate ", " entries
-  in
-    if empty D then
-      "empty"
-    else
-      List.foldl (op ^) "" entries
-  end
 
 end
 

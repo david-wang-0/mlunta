@@ -6,15 +6,12 @@ use "src/dbm/build.sml";
 use "src/parsing/build.sml";
 use "src/product_construction/build.sml";
 use "src/smlnjlib/build.sml";
-use "src/ta_util/build.sml";
 use "src/worklist_algorithms/build.sml";
 use "src/model_checking/build.sml";
 Build.subdir "src/"
              [
                         "compress",
                         "certification",
-                        "make_cert",
-                        "certification_buechi",
                         "mlunta",
                         "checker"
              ]

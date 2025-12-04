@@ -8,5 +8,3 @@ basic_setup.sml
 unified_reach.sml
 cyclicity.sml
 leadsto.sml
-ndfs.sml
-gabow_scc.sml

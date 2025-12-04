@@ -7,8 +7,6 @@ structure Basic = BasicSetup(D)
 structure Passed = Setup.Passed
 structure PWList = PassedToPWList(structure P = Passed)
 
-open Basics
-
 val subsumes = D.subsumption
 
 fun check_invariant (succs: (int array * int array) * D.zone -> ((int array * int array) * D.zone) list) passed =
@@ -52,6 +50,13 @@ fun check_invariant3 succs passed =
   in
     all id (Par_List.map check_pair pairs)
   end
+
+fun hm_sat P m k =
+  case Isa_Map.hm_lookup1 k m of
+    NONE => false
+  | SOME x => P x
+
+val array_to_list = Array.foldr (op ::) []
 
 fun check_invariant4 succs passed =
   let

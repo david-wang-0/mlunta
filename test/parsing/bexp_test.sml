@@ -71,17 +71,8 @@ val tests_input_upd = [
   ("upd empty", "", update, Left ()),
   ("update reset", "x := 2", update, Reset ("x", 2) |> succeed),
   ("update copy", "x := y", update, Copy ("x", "y") |> succeed),
-  ("update shift", "x := x + 3", update, Shift ("x", 3) |> succeed),
-  ("update negative shift", "x := x + -1", update, Shift ("x", ~1) |> succeed),
-  ("update negative shift parens", "x := (x + -1)", update, Shift ("x", ~1) |> succeed)
+  ("update shift", "x := x + 3", update, Shift ("x", 3) |> succeed)
   ]
-
-val tests_input_update_lists = [
-  ("update list", "actions_active := (actions_active + -1), b_1 := 1, b_2 := 0", updates, [Shift ("actions_active", ~1), Reset ("b_1", 1), Reset ("b_2", 0)] |> succeed),
-  ("update list 2", "x := 1, y := (y + -1)", updates, [Reset ("x", 1), Shift ("y", ~1)] |> succeed),
-  ("update list 3", "x := 1, y := (y + -1), z := 0", updates, [Reset ("x", 1), Shift ("y", ~1), Reset ("z", 0)] |> succeed),
-  ("update list 4", "l_1 := (l_1 + -1), l_6 := (l_6 + -1), e_3 := 0", updates, [Shift ("l_1", ~1), Shift ("l_6", ~1), Reset ("e_3", 0)] |> succeed)
-]
 
 val tests_input_actions = [
   ("Internal Empty", "", action, Internal "" |> succeed),
@@ -118,12 +109,11 @@ end
 
 val tests_bexp =  "BEXPS" >++ List.map create_testable tests_input_bexp
 val tests_upd = "Upd" >++ List.map create_testable tests_input_upd
-val tests_update_lists = "Upd lists" >++ List.map create_testable tests_input_update_lists
 val tests_action = "Actions" >++ List.map create_testable tests_input_actions
 
 val tests_formula = "Formula" >++ List.map create_testable tests_input_formula
 
-fun tests name = name >++ [tests_bexp, tests_upd, tests_update_lists, tests_formula, tests_action]
+fun tests name = name >++ [tests_bexp, tests_upd, tests_formula, tests_action]
 fun check name =
       run_test (tests name)
 

@@ -7,11 +7,7 @@ product_construction/construction.mlb
 smlnjlib/hashtable.mlb
 worklist_algorithms/worklist.mlb
 model_checking/checking.mlb
-ta_util/state_printing.sml
-ta_util/cert_util.sml
 $(SML_LIB)/basis/mlton.mlb
 compress.sml
 certification.sml
-make_cert.sml
-certification_buechi.sml
 mlunta.sml

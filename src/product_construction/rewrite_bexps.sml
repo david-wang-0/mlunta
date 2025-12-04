@@ -69,6 +69,10 @@ fun partition_labels is_broadcast (edges : RewriteBexpsTypes.edge list) =
 
 end
 
+val zero_clock = "0"
+
+fun add_zero_clock clocks = zero_clock :: clocks
+
 open Error
 open CompilationError
 open NamingError
@@ -172,8 +176,8 @@ fun check_formula automata clocks vars formula =
               Eg f => check f |> mapR Eg |
               Ax f => check f |> mapR Ax |
               Ag f => check f |> mapR Ag |
-              Leadsto (p, q) => (checkl p <|> check q) |> mapR Leadsto |
-              GF f => check f |> mapR GF
+              Leadsto (p, q) => (checkl p <|> check q)
+                                |> mapR Leadsto
     end
 end
 (* For vars and clocks *)
@@ -221,7 +225,7 @@ fun check_committed is_location_id =
     combine_map (fn id => if is_location_id id then return
                          else id |> unknown_id |> Error.lift_naming_err)
 
-fun check_automaton ({nodes, edges, initial, committed} : automaton) =
+fun check_automaton ({nodes, edges, initial, committed, urgent} : automaton) =
     let
       val ids = List.map #id nodes
       val names = List.map #name nodes
@@ -231,6 +235,7 @@ fun check_automaton ({nodes, edges, initial, committed} : automaton) =
       check_dups names
       <|> check_dups (map Int.toString ids)
       <|> check_committed (Inttab.defined location_id_set) committed
+      <|> check_committed (Inttab.defined location_id_set) urgent
       <|> check_dups (map Int.toString committed)
       <|> check_initial initial ids
       <|> check_src_dest ids src_dest
@@ -387,29 +392,36 @@ fun compile_updates clocks vars =
 
 fun compile_edge clocks vars ({source, target, guard, label, update} : edge) =
     compile_guards clocks vars guard
-    <|>  compile_updates clocks vars update
-    |> mapR (fn (((g_s, g_diag), g_data), (upd_c, upd_v))
-                  => {
-                         source = source,
-                         target = target,
-                         g_single = g_s,
-                         g_diag = g_diag,
-                         g_data = g_data,
-                         label = label,
-                         clock_updates = upd_c,
-                         var_updates = upd_v
-               }
-              )
+    <|> compile_updates clocks vars update
+    |> mapR (fn (((g_s, g_diag), g_data), (upd_c, upd_v)) => 
+        let val upd_c = (Reset (zero_clock, 0)) :: upd_c
+        in {
+            source = source,
+            target = target,
+            g_single = g_s,
+            g_diag = g_diag,
+            g_data = g_data,
+            label = label,
+            clock_updates = upd_c,
+            var_updates = upd_v
+        }
+        end)
 
-fun compile_node clocks vars ({id, name, invariant} : node) =
-    compile_invariant clocks vars invariant
-    |> mapR (fn invar => {id = id, name = name, invariant = invar})
+fun compile_node clocks vars urgent ({id, name, invariant} : node) =
+    let val time_stop = Constraint.Le (zero_clock, 0)
+    in compile_invariant clocks vars invariant
+      |> mapR (fn invar => 
+        if (List.exists (fn x => (x = id)) urgent)
+        then time_stop::invar 
+        else invar)
+      |> mapR (fn invar => {id = id, name = name, invariant = invar})
+    end
 
 
 fun compile_automaton is_broadcast clocks vars
-                      ({nodes, edges, initial, committed } : automaton) =
+                      ({nodes, edges, initial, committed, urgent} : automaton) =
     combine_map (compile_edge clocks vars) edges
-    <|> combine_map (compile_node clocks vars) nodes
+    <|> combine_map (compile_node clocks vars urgent) nodes
     |> bindR (fn (E, V) => mapR (rpair V)
                                 (Util.partition_labels is_broadcast E))
     |> mapR (fn (E,V) =>
@@ -454,7 +466,7 @@ fun network ({automata, clocks, vars, formula, broadcast_channels} : network) =
       |> mapR (fn (_,(tas, f)) =>
                       {
                         automata = tas,
-                        clocks = clocks,
+                        clocks = add_zero_clock clocks,
                         vars = vars,
                         formula = f,
                         broadcast_channels = broadcast_channels

@@ -14,7 +14,6 @@ sig
     val |~| : t -> t
     val |&| : t * t -> t
     val \/ : t * t -> t
-    val not : t -> t
     val neg_mask: t
     val check_neg: t -> bool
     val == : t * t -> bool
@@ -41,6 +40,7 @@ sig
     val max: t -> t -> t
     val min: t -> t -> t
     val from_int: int -> t
+    val to_int: t -> int
     val to_string: t -> string
 end
 
@@ -61,11 +61,11 @@ fun shiftl n w = W.<< (w, Word.fromInt n)
 fun shiftr n w = W.~>> (w, Word.fromInt n)
 val neg_mask = shiftl (W.wordSize - 1) one
 
+
+
 val maximum = W.notb neg_mask
 val minimum = neg_mask
-
 fun |~| x = W.~ x
-val not = W.notb
 
 fun a |&| b = W.andb (a, b)
 
@@ -171,7 +171,11 @@ fun from_int' overflow underflow return x =
     end
 
 val from_int = from_int' (fn _ => raise Overflow) (fn _ => raise Underflow) id
-
+  
+fun to_int x = 
+  x
+  |> W.toLargeIntX 
+  |> LargeInt.toInt
 
 fun min_max p x y = if p (x, y) then x else y
 val min = min_max (fn (x, y) => x |<| y)

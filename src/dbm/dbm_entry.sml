@@ -1,3 +1,5 @@
+(* XXX: Test not_bound and test mod_lsb *)
+
 (* A simple datatype for representing clockbounds *)
 signature INT_REP = sig
     datatype t = LT of int | LTE of int | Inf
@@ -13,6 +15,7 @@ sig
     type t
 
     val from_int: IntRep.t -> t
+    val to_int : t -> IntRep.t 
     (* Constructors for bounds: *)
     val =< : int -> t
     val ==< : int -> t
@@ -22,7 +25,7 @@ sig
     val zero: t
 
     (* modifies LSB according to the first argument *)
-    val toggle_lsb: t -> t
+    val mod_lsb: bool -> t -> t
     val add: t -> t -> t
     val |+| : t * t -> t
     val min: t -> t -> t
@@ -50,13 +53,7 @@ sig
     (* checks whether a bound is negative *)
     val check_neg: t -> bool
 
-    (* checks wether a bound is infinite *)
-    val is_inf: t -> bool
-
     val to_string: t -> string
-    (* Given two clock names (or NONE for the zero clock), make a string *)
-    val mk_string: string option -> string option -> t -> string
-    val inner_to_string: t -> string
 end
 
 (* The whole needed dbm_entry signature *)

@@ -72,7 +72,7 @@ local
 in
 fun scan_lt c =  scan_constraint_init "<" (Lt #> c)
 fun scan_le c =  scan_constraint_init "<=" (Le #> c)
-fun scan_eq c =  scan_constraint_init "=" (Eq #> c) || scan_constraint_init "==" (Eq #> c)
+fun scan_eq c =  scan_constraint_init "=" (Eq #> c)
 fun scan_ge c =  scan_constraint_init ">=" (Ge #> c)
 fun scan_gt c =  scan_constraint_init ">" (Gt #> c)
 end
@@ -167,29 +167,24 @@ in Symbol.strip_whitespace scan_7 end
 Maybe : Update for expressions
 *)
 val update_reset =
-    infix_pairc scan_var Symbol.natural ":=" Reset
-    || infix_pairc scan_var Symbol.natural "=" Reset
+    (* infix_pairc scan_var Symbol.natural ":=" Reset
+    || infix_pairc scan_var Symbol.natural "=" Reset *)
+    infix_pairc scan_var Symbol.integer ":=" Reset
+    || infix_pairc scan_var Symbol.integer "=" Reset
 val update_copy =
     infix_pairc scan_var scan_var ":=" Copy
     || infix_pairc scan_var scan_var "=" Copy
 
-(* munta can parse negative integers, while this was previously limited to natural numbers. Preliminary testing
-    indicates that this change breaks nothing *)
-val shift_plus = 
-    infix_pairc scan_var (scan_parens Symbol.integer) "+" id
-    || infix_pairc scan_var Symbol.integer "+" id
-
-val shift_plus_p =
-    scan_parens shift_plus
-    || shift_plus
+(* val shift_plus = infix_pairc scan_var Symbol.natural "+" id *)
+val shift_plus = infix_pairc scan_var Symbol.integer "+" id
 
 fun construct_shift (old , (new, inc)) =
-    if old = new then Shift (old, inc)
+    if old = new andalso inc >= 0 then Shift (old, inc)
     else Update (old, new, inc)
 
 val update_shift =
-    infix_pairc scan_var shift_plus_p ":=" construct_shift
-    || infix_pairc scan_var shift_plus_p "=" construct_shift
+    infix_pairc scan_var shift_plus ":=" construct_shift
+    || infix_pairc scan_var shift_plus "=" construct_shift
 
 val scan_update = (update_shift || update_reset || update_copy)
 
@@ -214,17 +209,14 @@ val scan_bexp_elem = scan_formula_pred
                          (scan_constraint Formula.Pred || scan_loc)
 
 
-(* CTL *)
 val ex = single_c scan_bexp_elem "E<>" Formula.Ex
 val eg = single_c scan_bexp_elem "E[]" Formula.Eg
 val ax = single_c scan_bexp_elem "A<>" Formula.Ax
 val ag = single_c scan_bexp_elem "A[]" Formula.Ag
 val leadsto = infix_pairc scan_bexp_elem scan_bexp_elem "-->"
                                Formula.Leadsto
-(* LTL *)
-val gf = single_c scan_bexp_elem "GF" Formula.GF
 
-val scan_formula = (ex || eg || ax || ag || leadsto || gf)
+val scan_formula = (ex || eg || ax || ag || leadsto)
 
 val formula = ParserUtil.safe_default "formula" (Formula.Ex Formula.True)
                                       scan_formula

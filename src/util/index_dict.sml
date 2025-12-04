@@ -22,4 +22,14 @@ fun show f dict =
     "["
     ^ (map f dict |> to_list |> String.concatWith ",")
     ^ "]"
+
+fun to_function dict key = 
+    find key dict
+
+exception ValueNotFound of string
+
+fun inv_function dict v =
+    case (Vector.findi (fn (i, x) => x = v) dict) of
+        NONE => raise ValueNotFound "Value not found" |
+        SOME (i, x) => i
 end

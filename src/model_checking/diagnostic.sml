@@ -4,13 +4,13 @@ signature DIAGNOSTIC = sig
   type passed
   val finish: (string * string) option -> diagnostic -> unit
   val make_with_cert: Time.time -> Network.info ->
-                      Word8Vector.vector -> int -> Property.sat -> diagnostic
+                      passed -> Property.sat -> diagnostic
   val make_without_cert: Time.time -> Property.sat -> diagnostic
   val property: diagnostic -> Property.sat
 end
 
 functor Diagnostic(Passed : MONO_PASSED_SET) : DIAGNOSTIC = struct
-fun magic_number version = 42 + version |> SerInt.serialize
+val magic_number = 42 |> SerInt.serialize
 type passed = Passed.passed_set
 type essential = {
   explored_states : int,
@@ -23,8 +23,7 @@ type cert = {
   processes : int,
   clocks : int,
   vars : int,
-  passed : Word8Vector.vector,
-  version: int
+  passed : passed
 }
 
 type diagnostic = {
@@ -33,25 +32,25 @@ type diagnostic = {
 }
 
 local open Unsynchronized in
-fun get_explored cyclicity reachability buechi =
+fun get_explored cyclicity reachability =
     let
-      val explored = (! cyclicity) + (! reachability) + (! buechi)
+      val explored = (! cyclicity) + (! reachability)
       val reset = flip change (K 0)
-      val _ = (reset cyclicity; reset reachability; reset buechi)
+      val _ = (reset cyclicity; reset reachability)
     in
       explored
     end
 end
 
-fun make_binary ({processes, clocks, vars, passed, renaming, version} : cert) =
+fun make_binary ({processes, clocks, vars, passed, renaming} : cert) =
     let
       fun add_int x = cons (SerInt.serialize x)
     in
       (
         JsonP.show renaming
       ,
-        
-           single passed
+        Passed.serialize passed
+        |> single
         |> add_int vars
         |> add_int clocks
         |> add_int processes
@@ -59,14 +58,13 @@ fun make_binary ({processes, clocks, vars, passed, renaming, version} : cert) =
       )
     end
 
-fun make_cert ({renaming, processes, clocks, vars} : Network.info) passed version =
+fun make_cert ({renaming, processes, clocks, vars} : Network.info) passed =
     SOME {
       renaming = renaming,
       passed =  passed,
       processes = processes,
       clocks = clocks,
-      vars = vars,
-      version = version
+      vars = vars
     }
 
 fun make_essential prop time explored =
@@ -83,14 +81,13 @@ fun make time cert prop =
                    prop
                    time
                    (get_explored CyclicityData.explored
-                                 ReachabilityData.explored
-                                 BuechiData.explored)
+                                 ReachabilityData.explored)
     }
 
-fun make_with_cert time info passed version =
+fun make_with_cert time info passed =
     make
         time
-        (make_cert info passed version)
+        (make_cert info passed)
 
 fun make_without_cert time prop =
     make time NONE prop
@@ -117,11 +114,10 @@ fun log_essential ({sat, explored_states, checking_time} : essential) =
 
 fun gen_and_flush_certificate renaming_name cert_name cert =
     let
-      val (renaming_str, binary) = make_binary cert
+      val (renaming_str, cert) = make_binary cert
       val renaming_file_name = renaming_name
       val cert_file_name = cert_name
-      val num = magic_number (#version cert)
-      val _ = BinIOUtil.save_data cert_file_name num binary
+      val _ = BinIOUtil.save_data cert_file_name magic_number cert
     in
       TextIOUtil.save_data renaming_file_name renaming_str
     end

@@ -37,13 +37,6 @@ signature NETWORK = sig
     clocks : int,
     vars : int
   }
-
-  type renaming_dicts ={
-    vars : string IndexDict.t,
-    clocks : string IndexDict.t,
-    locations : string IndexDict.t IndexDict.t
-  }
-
   type 'a system =
        {
              initial : 'a state,
@@ -63,7 +56,6 @@ signature NETWORK = sig
   val discrete: 'a state -> location
   val zone: 'a state -> 'a
   val info: 'a system -> info
-  val renaming_dicts: 'a system -> renaming_dicts
 end
 
 structure Network : NETWORK = struct
@@ -93,12 +85,6 @@ type info = {
   vars : int
 }
 
-type renaming_dicts ={
-  vars : string IndexDict.t,
-  clocks : string IndexDict.t,
-  locations : string IndexDict.t IndexDict.t
-}
-
 fun vars (net : 'a system) =
     net |> #var_dict |> IndexDict.size
 
@@ -112,7 +98,8 @@ val discrete = fst
 val zone = snd
 
 local open JsonP in
-fun renaming_json ({clock_dict, var_dict, loc_dict, ta_names, ...}: 'a system) =
+fun renaming_json ({clock_dict, var_dict, loc_dict, ta_names, ...}
+                   : 'a system) =
     let
       fun dict_to_json ty =
           IndexDict.foldli
@@ -142,10 +129,5 @@ fun info net =
       processes = processes net,
       clocks = clocks net,
       vars = vars net
-    }
-
-fun renaming_dicts (net: 'a system) =
-    {
-      vars = #var_dict net, clocks = #clock_dict net, locations = #name_dict net
     }
 end

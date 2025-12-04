@@ -1,7 +1,7 @@
 structure Property = struct
 datatype 'a result =
-    Satisfied of 'a |
-    Unsatisfied of 'a
+         Satisfied of 'a |
+         Unsatisfied of 'a
 
 fun convert prop =
     case prop of

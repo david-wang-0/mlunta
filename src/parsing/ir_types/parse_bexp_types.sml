@@ -19,7 +19,8 @@ structure ParseBexpTypes = struct
         nodes: node list,
         edges: edge list,
         initial: int,
-        committed: int list
+        committed: int list,
+        urgent: int list
     }
 
 

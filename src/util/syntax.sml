@@ -76,11 +76,11 @@ fun join error (e, e') =
 end
 structure Constraint = struct
 datatype ('a, 'b) constraint =
-    Eq of 'a * 'b |
-    Le of 'a * 'b |
-    Lt of 'a * 'b |
-    Ge of 'a * 'b |
-    Gt of 'a * 'b
+         Eq of 'a * 'b |
+         Le of 'a * 'b |
+         Lt of 'a * 'b |
+         Ge of 'a * 'b |
+         Gt of 'a * 'b
 
 fun is_constr c p =
     case c of
@@ -273,25 +273,21 @@ type ('a, 'b) constraint = ('a, 'b) Constraint.constraint
 type 'a diff = 'a Difference.clock_pair
 structure Formula = struct
 datatype ('a, 'b) bexp =
-    True |
-    Not of ('a, 'b) bexp |
-    And of ('a, 'b) bexp * ('a, 'b) bexp |
-    Or of ('a, 'b) bexp * ('a, 'b) bexp |
-    Impl of ('a, 'b) bexp * ('a, 'b) bexp |
-    (* Only part of parsing a formula *)
-    Loc of 'a * 'a |
-    Pred of ('a, 'b) diff_constraint
+         True |
+         Not of ('a, 'b) bexp |
+         And of ('a, 'b) bexp * ('a, 'b) bexp |
+         Or of ('a, 'b) bexp * ('a, 'b) bexp |
+         Impl of ('a, 'b) bexp * ('a, 'b) bexp |
+         (* Only part of parsing a formular *)
+         Loc of 'a * 'a |
+         Pred of ('a, 'b) diff_constraint
 
 datatype 'a F =
-    (* CTL *)
-    Ex of 'a |
-    Eg of 'a |
-    Ax of 'a |
-    Ag of 'a |
-    Leadsto of 'a * 'a |
-    (* LTL *)
-    GF of 'a
-
+         Ex of 'a |
+         Eg of 'a |
+         Ax of 'a |
+         Ag of 'a |
+         Leadsto of 'a * 'a
 
 fun result f prop =
     case prop of
@@ -299,18 +295,16 @@ fun result f prop =
       | Ax res => Ax (f res)
       | Ex res => Ex res
       | Eg res => Eg res
-      | GF res => GF res
       | _ => undefined ()
 
 (* XXX: Add check *)
 fun map f F =
     case F of
-        Ex x => Ex (f x) |
-        Eg x => Eg (f x) |
-        Ax x => Ax (f x) |
-        Ag x => Ag (f x) |
-        Leadsto (p, q) => Leadsto (f p, f q) |
-        GF x => GF (f x)
+            Ex x => Ex (f x) |
+            Eg x => Eg (f x) |
+            Ax x => Ax (f x) |
+            Ag x => Ag (f x) |
+            Leadsto (p, q) => Leadsto (f p, f q)
 
 fun the_formula F =
     case F of
@@ -318,7 +312,6 @@ fun the_formula F =
         Eg x => x |
         Ax x => x |
         Ag x => x |
-        GF x => x |
         _ => undefined ()
 
 fun p_q F =
@@ -328,10 +321,11 @@ fun p_q F =
 
 fun conv F =
     case F of
+        Ex p => Ex p |
+        Eg p => Eg p |
         Ax p => Ax (not o p) |
         Ag p => Ag (not o p) |
-        Leadsto (p, q) => Leadsto (p, not o q) |
-        F => F
+        Leadsto (p, q) => Leadsto (p, not o q)
 end
 
 type ('a, 'b) formula = ('a, 'b) Formula.bexp Formula.F

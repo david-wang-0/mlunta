@@ -1,35 +1,4 @@
-signature PRELUDE =
-sig
-  val cp_arr: 'a array -> 'a array
-  val array_to_list: 'a array -> 'a list
-  val mapi_array: (int * 'a -> 'b) -> 'a array -> 'b list
-
-  val foldl_until    : ('b -> bool) -> (('a * 'b) -> 'b) -> 'b -> 'a list -> 'b
-  val fold_until_snd : ('a * ('b * bool) -> 'b * bool) -> 'b * bool
-                       -> 'a list list -> 'b * bool
-
-  val rev_map_filter : ('a -> 'b option) -> 'a list -> 'b list
-  val find_all       : ('a -> bool) -> 'a list -> 'a list
-  val filter_index : (int -> 'a -> bool) -> 'a list -> 'a list
-  val all: ('a -> bool) -> 'a list -> bool
-  val exists: ('a -> bool) -> 'a list -> bool
-  val remove: int -> 'a list -> 'a list
-
-  val println: string -> unit
-
-  val undefined: 'a -> 'b
-  val debug_info: string -> 'a -> 'a
-  val debug: 'a -> 'a
-  val upto: int -> int -> int list
-
-  val flip : ('a -> 'b -> 'c) -> 'b -> 'a -> 'c
-  val id   : 'a -> 'a
-  val -->  : ('a * 'b -> 'c) -> 'a -> 'b -> 'c
-  val &&   : ('a -> 'b -> 'c) -> 'a * 'b -> 'c
-  val implode: string list -> string
-end
-
-structure Prelude : PRELUDE = struct
+(* XXX: look at library.ML of isabelle *)
 fun cp_arr arr =
     let
       val cp = Array.array (Array.length arr, Array.sub (arr, 0))
@@ -86,18 +55,3 @@ fun println msg = msg ^ "\n" |> print
 fun undefined x = (println "undefined function" |> Library.undefined)
 fun debug_info msg x = tap (K (println msg)) x
 fun debug x = debug_info "here" x
-
-fun upto i j = if j < i then [] else i :: upto (i + 1) j
-
-(* Array *)
-fun mapi_array f a =
-    Array.foldli (fn (i, x, xs) => f (i, x) :: xs) [] a |> rev
-
-fun array_to_list xs = Array.foldr (op ::) [] xs
-
-(* Strings *)
-fun implode xs =
-    rev xs |> List.foldl (op ^) ""
-
-end
-open Prelude;

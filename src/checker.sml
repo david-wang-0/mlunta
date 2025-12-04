@@ -48,7 +48,7 @@ fun flags args =
       val is_extra = fn "-extra" => true | "-e" => true | _ => false
       val extra =
           case dissect_arguments is_extra args of
-              NONE => SOME Local |
+              NONE => (print "ok"; SOME Local) |
               SOME str => extra_from_str str
     in
       (model, extra, renaming_path, cert_path, compression, certification,
@@ -113,7 +113,7 @@ fun check args =
       | (SOME model, NONE, NONE, NONE, NONE, NONE, NONE) => check_network model
       | (SOME model, SOME Local, NONE, NONE, NONE, NONE, NONE) => check_network model
       | (SOME model, SOME LU, NONE, NONE, NONE, NONE, NONE) => check_network_lu model
-      | _ =>  Exn.error usage
+      | _ => Exn.error usage
 
 fun main () =
     flags (CommandLine.arguments ())

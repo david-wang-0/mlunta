@@ -22,8 +22,6 @@ fun main () =
       ConstraintTest.check "Constraint";
       PolyPWListTest.check "PolyPWList";
 
-      Gabow_SCC_Test.check "Gabow SCC Test";
-
       ReachabilityTest.check "Reachability Tests";
       AlwaysEventuallyTest.check "Always Eventually Tests";
       LeadstoTest.check "Leadsto Tests"

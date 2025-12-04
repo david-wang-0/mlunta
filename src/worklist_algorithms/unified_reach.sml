@@ -1,5 +1,5 @@
 structure ReachabilityData = struct
-val explored = Unsynchronized.ref 0
+val explored = Unsynchronized.ref 0 (* This is an integer zero *)
 end
 
 functor ReachabilityChecker(Setup : CHECKING_SETUP) = struct

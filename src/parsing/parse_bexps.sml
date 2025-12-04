@@ -23,14 +23,15 @@ fun node ({ id: int, name: string, invar: string } : node) =
     BexpParser.invariant invar
     |> mapR (fn invar' => {id = id, name = name, invariant = invar'})
 
-fun automaton ({ nodes, edges, initial, committed} : automaton) =
+fun automaton ({ nodes, edges, initial, committed, urgent} : automaton) =
     (combine_map node nodes <|> combine_map edge edges)
     |> mapR (fn (V,E) =>
                 {
                   nodes = V,
                   edges = E,
                   initial = initial,
-                  committed = committed
+                  committed = committed,
+                  urgent = urgent
             })
 
 fun network ( { automata, clocks, vars,

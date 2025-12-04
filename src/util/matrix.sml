@@ -12,4 +12,5 @@ signature MATRIX = sig
     val foldli: (int * 'a * 'b -> 'b) -> 'b -> 'a matrix -> 'b
     val appij: (int * int * 'a -> unit) -> 'a matrix -> unit
     val cmp: ('a * 'a -> bool) -> 'a matrix -> 'a matrix -> bool
+    val toList: 'a matrix -> 'a list list
 end

@@ -44,8 +44,6 @@ open NamingError
 open RewriteBexpsTypes
 open Syntax
 
-fun add_zero_clock clocks = "0" :: clocks
-
 fun create_renaming_map update empty =
     IndexDict.fromList
     #> ` (IndexDict.foldli
@@ -263,15 +261,14 @@ fun re_formula proc_f' var_f form_f f =
               Eg f => renaming f |> mapR Eg |
               Ax f => renaming f |> mapR Ax |
               Ag f => renaming f |> mapR Ag |
-              Leadsto (p, q) => renaming p <|> renaming q |> mapR Leadsto |
-              GF f => renaming f |> mapR GF
+              Leadsto (p, q) => renaming p <|> renaming q |> mapR Leadsto
     end
 
 (* Here finally the zero clock is introduced *)
 fun network ({automata, clocks, vars, formula, broadcast_channels} : network) =
     let
       val (ix_str_clocks, str_ix_clocks) =
-              create_renaming_symtab (add_zero_clock clocks)
+              create_renaming_symtab clocks
       val clock_f = mk_clockf str_ix_clocks
 
       val (ix_str_vars, str_ix_vars) =

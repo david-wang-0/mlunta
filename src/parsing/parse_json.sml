@@ -35,6 +35,9 @@ val v = JsonP.find_arr "nodes"
 val committed =
     JsonP.find_arr "committed" #> optional_list (JsonP.get_int "committed")
 
+val urgent =
+    JsonP.find_arr "urgent" #> optional_list (JsonP.get_int "urgent")
+
 (* Getting Network info *)
 val automata = JsonP.find_arr "automata"
 val broadcast_channels =
@@ -60,13 +63,14 @@ val node_constr = fn ((id, invar), name) =>
                        invar = invar
                      }
 
-val ta_constr = fn (((name, initial), (E, V)), committed) =>
+val ta_constr = fn ((((name, initial), (E, V)), committed), urgent) =>
                    (name ,
                     {
                       nodes = V,
                       edges = E,
                       initial = initial,
-                      committed = committed
+                      committed = committed,
+                      urgent = urgent
                    })
 
 val net_constr = fn (((clcks, vars), (formula, tas)), broadcast_channels) =>
@@ -93,7 +97,8 @@ fun pipe f g x =
 fun ta json =
     (((name json <|> initial json)
     <|> (pipe e edge json <|> pipe v node json))
-    <|> committed json)
+    <|> committed json
+    <|> urgent json)
     |> mapR ta_constr
 
 fun net json =

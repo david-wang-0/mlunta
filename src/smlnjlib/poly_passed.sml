@@ -82,10 +82,9 @@ fun grow_cond (Htbl{table, n_buckets, ...}) =
 fun mk_waiting k v = (ref k, ref v)
 
 
-(* Inserts a key and zone into a passed waiting list.
-  If it is discarded it returns NONE.
-  Otherwise it adds the zone to the passed Htbl and returns the
-  reference for the waiting queue *)
+(* Inserts a key and zone into a passed waiting list if it is discarded it
+       returns NONE Other wise it adds the zone to the passed Htbl and returns the
+       reference for the waiting queue *)
 fun insert_p p (tbl as Htbl{hash, key_eq, table, n_buckets, n_states})
              (key, zone) =
     let
@@ -209,29 +208,6 @@ fun pop (Htbl{hash, key_eq, table, n_buckets, n_states}) k = let
                  [] => Exn.impossible () |
                  [ref D] => (dec n_buckets; rs) |
                  ((ref D)::DS) => B (h, (k', DS), rs))
-          else let val r' = look rs in B (h, (k', union), r') end
-  val bucket = look (Array.sub (arr, indx))
-in
-  (
-    dec n_states;
-    Array.update (arr, indx, bucket)
-  )
-end
-
-fun remove_p p (Htbl{hash, key_eq, table, n_buckets, n_states}) k = let
-  val arr = !table
-  val sz = Array.length arr
-  val hash = hash k
-  open HTRep
-  val indx = index (hash, sz)
-  fun look bucket =
-      case bucket of
-          Empty => Empty |
-          B (h, (k', union), rs) =>
-          if hash = h andalso key_eq (k, ! k') then
-            (case List.filter (fn ref zone => p zone) union of
-                 [] => (dec n_buckets; rs) |
-                 DS => B (h, (k', DS), rs))
           else let val r' = look rs in B (h, (k', union), r') end
   val bucket = look (Array.sub (arr, indx))
 in

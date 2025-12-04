@@ -5,13 +5,15 @@ type to = Word8Vector.vector
 open IntRep
 
 fun from_int x = id x
+fun to_int x = id x
+
 fun =< x = from_int (LT x)
 fun ==< x = from_int (LTE x)
 
-fun toggle_lsb x =
+fun mod_lsb b x =
     case x of
-        (LT b) => (LTE b) |
-        (LTE b) => (LT b) |
+        (LT x') => if b then (LTE x') else x |
+        (LTE x') => if b then (LT x') else x |
         Inf => Inf
 
 val inf = Inf
@@ -64,26 +66,8 @@ fun max_ceil c c' =
 fun to_string x =
     case x of
         Inf => "oo" |
-        LT x => "(" ^ Int.toString x ^ ", < )" |
-        LTE x => "(" ^ Int.toString x ^ ", <=)"
-
-fun inner_to_string (LTE x) = Int.toString x
-  | inner_to_string (LT x) = Int.toString x
-  | inner_to_string Inf = "oo"
-
-fun mk_string x y e =
-    case (e, x, y) of
-        (Inf, _, _) => "oo"
-      | (LT c, NONE, NONE) => " < " ^ Int.toString c
-      | (LT c, SOME x, NONE) => x ^ " < " ^ Int.toString c
-      | (LT c, NONE, SOME y) => y ^ " > " ^ Int.toString (0 - c)
-      | (LT c, SOME x, SOME y) =>
-        if c = 0 then x ^ " < " ^ y else x ^ " - " ^ y ^ " < " ^ Int.toString c
-      | (LTE c, NONE, NONE) => " <= " ^ Int.toString c
-      | (LTE c, SOME x, NONE) => x ^ " <= " ^ Int.toString c
-      | (LTE c, NONE, SOME y) => y ^ " >= " ^ Int.toString (0 - c)
-      | (LTE c, SOME x, SOME y) =>
-        if c = 0 then x ^ " <= " ^ y else x ^ " - " ^ y ^ " <= " ^ Int.toString c
+        (LT x) => "(" ^ Int.toString x ^ ", < )" |
+        (LTE x) => "(" ^ Int.toString x ^ ", <=)"
 
 fun |~| x =
     case x of
@@ -108,8 +92,6 @@ fun check_neg x =
         Inf => false |
         (LTE x) => x < 0 |
         (LT x) => x <= 0
-
-fun is_inf x = (x = Inf)
 
 fun serialize x = x |> Entry64Bit.from_int |> Entry64Bit.serialize
 end
