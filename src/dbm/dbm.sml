@@ -18,6 +18,7 @@ sig
   (* Creating DBMs: *)
   (* XXX: What from list should exist  *)
   val from_list : Entry.t list list -> t
+  val to_list : t -> Entry.t list list 
   val from_int_rep_list : IntRep.t list list -> t
   val to_int_rep_list : t -> IntRep.t list list
 
@@ -98,6 +99,7 @@ fun init n_clocks =
 
 val copy = M.copy
 val from_list = M.fromList
+val to_list = M.toList
 
 fun empty D =
     let
