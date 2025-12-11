@@ -17,12 +17,11 @@ fun fromList ls =
                        (len + 1, elem @ acc)) (0, [])
     |> apsnd Array.fromList
 
-fun toList (n, m) =
-    if (0 < n)
+fun toList (dim, m) =
+    if (0 < dim)
     then let 
-            val row_len = Array.length m div n;
             val f = (fn (i, v, acc) =>
-                if (i mod row_len = 0)
+                if ((i mod dim) = (dim-1))
                 then [v]::acc
                 else (v::hd acc)::tl acc
             );

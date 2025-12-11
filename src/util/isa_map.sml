@@ -114,7 +114,7 @@ fun grow (aref, i, x) = case aref of
         val na = Array.array (len+i,x)
     in
       aref := Invalid;
-      Array.copy {src=a, dst=na, di=0};
+      Array.update (na, 0, Array.sub(a, 0));
       Unsynchronized.ref (Value na)
     end
     );
@@ -175,7 +175,7 @@ structure FArray = struct
           val len = Array.length a;
           val a' = Array.array (len,v);
         in
-          Array.copy {src=a, dst=a', di=0};
+          Array.update (a', 0, Array.sub(a, 0));
           Unsynchronized.ref (Value a')
         end
       ) |
@@ -213,7 +213,7 @@ structure FArray = struct
       let val len=Array.length a;
           val na = Array.array (len+inc,x)
       in
-        Array.copy {src=a, dst=na, di=0};
+        Array.update (na, 0, Array.sub(a, 0));
         Unsynchronized.ref (Value na)
       end
       )
@@ -275,11 +275,11 @@ end
 
 
    fun array_blit src si dst di len = (
-      src=dst andalso raise Fail ("array_blit: Same arrays");
-      ArraySlice.copy {
+      src=dst andalso raise Fail ("array_blit: Same arrays"); ())
+      (* ArraySlice.copy {
         di = Int.toInt di,
         src = ArraySlice.slice (src,Int.toInt si,SOME (Int.toInt len)),
-        dst = dst})
+        dst = dst}) *)
 
     fun array_nth_oo v a i () = Array.sub(a,Int.toInt i) handle Subscript => v | Overflow => v
     fun array_upd_oo f i x a () = 

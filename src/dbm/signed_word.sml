@@ -156,7 +156,7 @@ fun add_ex x y =
 fun (x |+| y) = add_ex x y
 
 fun from_int' overflow underflow return x =
-       let
+    let
         val large_x = LargeInt.fromInt x
         val x_neg = Int.sign x = Int.~ 1
         val res = W.fromLargeInt large_x
@@ -171,11 +171,10 @@ fun from_int' overflow underflow return x =
     end
 
 val from_int = from_int' (fn _ => raise Overflow) (fn _ => raise Underflow) id
-  
+
 fun to_int x = 
-  x
-  |> W.toLargeIntX 
-  |> LargeInt.toInt
+    x
+    |> W.toIntX
 
 fun min_max p x y = if p (x, y) then x else y
 val min = min_max (fn (x, y) => x |<| y)

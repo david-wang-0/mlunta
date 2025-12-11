@@ -81,11 +81,16 @@ fun from_int (IntRep.LTE 0) = W.one
   | from_int (IntRep.LT n) = aux_from_int n
   | from_int IntRep.Inf = inf
 
+fun aux_to_int n = W.shiftr 1 n |> W.to_int
 
 fun to_int x =
-    if x == inf 
-    then IntRep.Inf
-    else IntRep.LT (W.to_int x)
+    if x == inf then 
+        IntRep.Inf
+    else let
+        val x' = aux_to_int x
+    in 
+        (if (W.mod2 x == W.one) then IntRep.LT x' else IntRep.LTE x')
+    end
 
 
 fun =< x = from_int (IntRep.LT x)
