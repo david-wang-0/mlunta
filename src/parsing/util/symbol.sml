@@ -28,7 +28,7 @@ val is_letter_digit =
     is_letter orf is_digit
 
 val is_quasi =
-    is (fn "'" => true | "_" => true | _ => false)
+    is (fn "'" => true | "_" => true | "-" => true | _ => false)
 
 fun is_wsp s =
     is (fn " " => true

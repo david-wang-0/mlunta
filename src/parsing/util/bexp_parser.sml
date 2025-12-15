@@ -62,6 +62,9 @@ val scan_action =
 (* ********************************************************************** *)
 (*                  scanning guards and invariants                        *)
 (* ********************************************************************** *)
+
+fun scan_true true_const = Symbol.strip_whitespace (Scan.this_string "True") >> (fn _ => true_const)
+
 fun scan_pairc_constr p sep = infix_pairc p natural sep
 val scan_single = scan_var >> Difference.Single
 val scan_diff = infix_pairc scan_var scan_var "-" Difference.Diff
@@ -82,12 +85,13 @@ fun scan_constraint c =
 fun scan_constr_invar sep = scan_pairc_constr scan_var sep
 val scan_lt_invar = scan_constr_invar "<" (Constraint.Lt #> Invariant.Constr)
 val scan_le_invar = scan_constr_invar "<=" (Constraint.Le #> Invariant.Constr)
-val scan_invar_constraint = (scan_lt_invar || scan_le_invar)
+val scan_invar_constraint = (scan_lt_invar || scan_le_invar || scan_true Invariant.True)
+
 
 
 (* val scan_loc = scan_pairc scan_var scan_var *)
 fun scan_parens inner = $$ "(" |-- Symbol.strip_whitespace inner --| $$ ")"
-
+fun scan_parens_opt inner = (scan_parens inner || Symbol.strip_whitespace inner)
 (* Adapted/ ported from Simon Wimmer's parser for the munta-frontend *)
 (* ********************************************************************** *)
 (*                              Invariants                                *)
@@ -199,7 +203,7 @@ val bexp = ParserUtil.safe_default "bexp" Formula.True
                                 (scan_constraint Formula.Pred || scan_loc))
 
 val guard = ParserUtil.safe_default "guard" Guard.True
-                                    (scan_bexp_guards (scan_constraint Guard.Constr))
+                                    (scan_bexp_guards (scan_constraint Guard.Constr || scan_true Guard.True))
 
 val invariant =
     ParserUtil.safe_default "invariant" Invariant.True
