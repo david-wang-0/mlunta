@@ -87,7 +87,7 @@
       ]
     }
   ],
-  "clocks": "0, x, y",
+  "clocks": "x, y",
   "vars": "",
   "formula": "E<> TA1.C"
 }

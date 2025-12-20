@@ -1,7 +1,6 @@
 {
   "automata": [
     {
-      "name": "TA2",
       "initial": 8,
       "nodes": [
         {
@@ -22,7 +21,6 @@
       "edges": [
         {
           "source": 8,
-          "target": 7,
           "guard": "",
           "label": "",
           "update": ""
@@ -95,7 +93,5 @@
       ]
     }
   ],
-  "clocks": "x, y",
-  "vars": "a[0:1], b[0:1]",
   "formula": "E<> TA1.D"
 }

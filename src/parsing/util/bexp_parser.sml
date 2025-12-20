@@ -85,7 +85,7 @@ fun scan_constraint c =
 fun scan_constr_invar sep = scan_pairc_constr scan_var sep
 val scan_lt_invar = scan_constr_invar "<" (Constraint.Lt #> Invariant.Constr)
 val scan_le_invar = scan_constr_invar "<=" (Constraint.Le #> Invariant.Constr)
-val scan_invar_constraint = (scan_lt_invar || scan_le_invar || scan_true Invariant.True)
+val scan_invar_constraint = (scan_lt_invar || scan_le_invar(* || scan_true Invariant.True*))
 
 
 
@@ -203,7 +203,7 @@ val bexp = ParserUtil.safe_default "bexp" Formula.True
                                 (scan_constraint Formula.Pred || scan_loc))
 
 val guard = ParserUtil.safe_default "guard" Guard.True
-                                    (scan_bexp_guards (scan_constraint Guard.Constr || scan_true Guard.True))
+                                    (scan_bexp_guards (scan_constraint Guard.Constr(* || scan_true Guard.True*)))
 
 val invariant =
     ParserUtil.safe_default "invariant" Invariant.True
