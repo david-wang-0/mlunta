@@ -48,7 +48,7 @@ fun flags args =
       val is_extra = fn "-extra" => true | "-e" => true | _ => false
       val extra =
           case dissect_arguments is_extra args of
-              NONE => (print "ok"; SOME Local) |
+              NONE => SOME Local |
               SOME str => extra_from_str str
     in
       (model, extra, renaming_path, cert_path, compression, certification,
