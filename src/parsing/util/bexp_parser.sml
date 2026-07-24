@@ -67,7 +67,12 @@ fun scan_true true_const = Symbol.strip_whitespace (Scan.this_string "True") >> 
 
 fun scan_pairc_constr p sep = infix_pairc p natural sep
 val scan_single = scan_var >> Difference.Single
-val scan_diff = infix_pairc scan_var scan_var "-" Difference.Diff
+val scan_diff_raw = infix_pairc scan_var scan_var "-" Difference.Diff
+(* also accept the PARENTHESIZED difference "(a - b)": the plan_cert muntax printer
+   parenthesizes variable differences because Munta's verified guard grammar compares
+   atomic expressions only (a bare a - b >= 0 does not parse there) *)
+val scan_diff =
+    ($$ "(" |-- Symbol.strip_whitespace scan_diff_raw --| $$ ")") || scan_diff_raw
 
 fun scan_constraint_init sep = scan_pairc_constr (scan_diff || scan_single) sep
 local

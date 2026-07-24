@@ -242,9 +242,15 @@ fun check_automaton ({nodes, edges, initial, committed, urgent} : automaton) =
       |> bindR (K return)
     end
 
-fun check_bound (var as {lower, upper, ...} : Syntax.var) =
-    if lower <= 0 andalso upper >= 0 then return
-    else "Variables need to have 0 in their bound" |> GeneralError |> lift_err
+(* RELAXED (plan_cert): originally required 0 \<in> [lower, upper] -- MLunta's product
+   construction assumes 0-initialized variables.  In plan_cert this parse is used only to
+   DERIVE THE RENAMING (the in-process MLunta checker is retired), and the numeric nets
+   carry point-bounded static fluents (e.g. item_id[1:1]) whose bounds exclude 0.  The
+   renaming is validated downstream by the verified Munta checker, which fails closed on
+   any mismatch, so accepting all well-formed bounds here is safe. *)
+fun check_bound ({lower, upper, ...} : Syntax.var) =
+    if lower <= upper then return
+    else "Variable bounds must satisfy lower <= upper" |> GeneralError |> lift_err
 
 fun check_bounds vars = combine_map check_bound vars
 
